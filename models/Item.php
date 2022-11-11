@@ -77,4 +77,96 @@ class Item{
         $stmt->close();
         $db->conn->close(); 
     }
+
+    public static function getfilterParams()
+    {
+        $params = [];
+        $db = new DB();
+        $query = "SELECT DISTINCT `quantity` FROM `items`";
+        $result = $db->conn->query($query);
+
+        while($row = $result->fetch_assoc()){
+            $params[] = $row['quantity'];
+        }
+        $db->conn->close();
+        return $params;
+    }
+
+
+
+public static function filter()
+{
+    // print_r($_GET);
+    
+    $items = [];
+    $db = new DB();
+    $query = "SELECT * FROM `items` ";
+    $first = true;
+    if($_GET['filter'] != ""){
+        $query .= "WHERE `quantity` = " . $_GET['filter']. " ";
+        $first = false;
+    }
+
+    // echo $query;
+    if($_GET['from'] != ""){
+        $query .= ( ($first)? "WHERE" : "AND") ." `price` >= " . $_GET['from'] . " ";
+        $first = false;
+    }
+    
+    if($_GET['to'] != ""){
+        $query .= ( ($first)? "WHERE" : "AND") ." `price` <= " . $_GET['to'] . " ";
+        $first = false;
+    }
+// f n i
+// f n
+// f i 
+// n 
+// n i 
+// i
+
+    switch ($_GET['sort']) {
+        case '1':
+            $query .= "ORDER by `price`";
+            break;
+
+        case '2':
+            $query .= "ORDER by `price` DESC";
+            break;
+
+        case '3':
+            $query .= "ORDER by `title`";
+            break;
+
+        case '4':
+            $query .= "ORDER by `title` DESC";
+            break;
+    }
+    // echo $query;
+    // die;
+    $result = $db->conn->query($query);
+
+    while($row = $result->fetch_assoc()){
+        $items[] = new Item( $row['id'], $row['title'], $row['description'], $row['price'], $row['quantity']);
+    }
+    $db->conn->close();
+    return $items;
+    }
+
+public static function search(){
+    $items = [];
+    $db = new DB();
+    $query = "SELECT * FROM `items` where `title` like \"%" . $_GET['search'] . "%\""; 
+    $result = $db->conn->query($query);
+
+    while($row = $result->fetch_assoc()){
+        $items[] = new Item( $row['id'], $row['title'], $row['description'], $row['price'], $row['quantity']);
+    }
+    $db->conn->close();
+    return $items;
 }
+ 
+}
+
+
+
+?>

@@ -11,7 +11,8 @@ class ItemController{
     }
 
     public static function store()
-    {
+    {        
+        
        Item::create();
     }
 
@@ -37,10 +38,20 @@ class ItemController{
        Item::destroy($_POST['id']);
     }
 
+    public static function getfilterParams()
+    {        
+       return Item::getfilterParams();
+    }
 
+    public static function filter()
+    {        
+       return Item::filter();
+    }
 
-
-
+    public static function search()
+    {        
+       return Item::search();
+    }
 
 
 
@@ -49,5 +60,7 @@ class ItemController{
 
 
 }
+
+
 
 ?>
